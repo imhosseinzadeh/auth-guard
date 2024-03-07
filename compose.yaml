@@ -1,0 +1,44 @@
+version: '3.8'
+
+name: security-sample
+
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-security-sample}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - network
+    restart: unless-stopped
+
+  pgadmin:
+    image: dpage/pgadmin4:8.3
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - network
+    depends_on:
+      postgres:
+        condition: service_started
+    restart: unless-stopped
+
+networks:
+  network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: postgres_data
+  pgadmin_data:
+    name: pgadmin_data
