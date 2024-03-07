@@ -1,10 +1,10 @@
-package com.imho.securitysample;
+package com.imho.authguard;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SecuritySampleApplicationTests {
+class AuthGuardApplicationTests {
 
     @Test
     void contextLoads() {

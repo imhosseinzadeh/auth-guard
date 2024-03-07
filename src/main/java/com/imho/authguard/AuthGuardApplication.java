@@ -1,13 +1,13 @@
-package com.imho.securitysample;
+package com.imho.authguard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SecuritySampleApplication {
+public class AuthGuardApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(SecuritySampleApplication.class, args);
+        SpringApplication.run(AuthGuardApplication.class, args);
     }
 
 }

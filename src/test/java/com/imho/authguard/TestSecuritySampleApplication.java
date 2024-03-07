@@ -1,4 +1,4 @@
-package com.imho.securitysample;
+package com.imho.authguard;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,7 +17,7 @@ public class TestSecuritySampleApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.from(SecuritySampleApplication::main).with(TestSecuritySampleApplication.class).run(args);
+        SpringApplication.from(AuthGuardApplication::main).with(TestSecuritySampleApplication.class).run(args);
     }
 
 }
