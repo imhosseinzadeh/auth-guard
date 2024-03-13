@@ -4,9 +4,9 @@ name: auth-guard
 
 services:
   postgres:
-    image: postgres:15
+    image: postgres:16
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-security-sample}
+      POSTGRES_DB: ${POSTGRES_DB:-auth-guard}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
     volumes:
@@ -39,6 +39,6 @@ networks:
 
 volumes:
   postgres_data:
-    name: postgres_data
+    name: auth-guard-postgres-data
   pgadmin_data:
-    name: pgadmin_data
+    name: auth-guard-pgadmin-data
