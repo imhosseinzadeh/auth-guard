@@ -1,4 +1,4 @@
-package com.imho.authguard.adapter.config;
+package com.imho.authguard.config.openapi;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;

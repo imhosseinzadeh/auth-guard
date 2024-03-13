@@ -1,4 +1,4 @@
-package com.imho.authguard.adapter.in.rest;
+package com.imho.authguard.common;
 
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
