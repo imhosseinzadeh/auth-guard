@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Welcome To AuthGuard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+        }
+
+        .swagger-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome To AuthGuard</h1>
+    <p>AuthGuard is a robust user authentication and authorization application.</p>
+    <button aria-label="Open Swagger Documentation" class="swagger-button" onclick="openSwaggerDocumentation()">
+        Open Swagger Documentation
+    </button>
+</div>
+
+<script>
+    function openSwaggerDocumentation() {
+        const url = 'swagger-ui/index.html';
+        const win = window.open(url, '_blank');
+        if (!win) {
+            alert('Failed to open Swagger documentation. Please make sure your browser allows pop-ups.');
+        }
+    }
+</script>
+
+</body>
+</html>
