@@ -1,6 +1,6 @@
 package com.imho.authguard.user;
 
-import com.imho.authguard.authorization.Role;
+import com.imho.authguard.useraccess.Role;
 import com.imho.authguard.common.AbstractEntity;
 import jakarta.persistence.*;
 import lombok.Getter;

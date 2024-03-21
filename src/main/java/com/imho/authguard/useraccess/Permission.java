@@ -1,4 +1,4 @@
-package com.imho.authguard.authorization;
+package com.imho.authguard.useraccess;
 
 import com.imho.authguard.common.AbstractEntity;
 import jakarta.persistence.*;
