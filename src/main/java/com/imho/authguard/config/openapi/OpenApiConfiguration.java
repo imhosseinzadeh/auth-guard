@@ -51,8 +51,8 @@ public class OpenApiConfiguration {
                 .email(CONTACT_EMAIL)
                 .url(CONTACT_URL);
 
-        private static final String LICENSE_NAME = "License 2024";
-        private static final String LICENSE_URL = "License Url";
+        private static final String LICENSE_NAME = "GPLv3";
+        private static final String LICENSE_URL = "https://www.gnu.org/licenses/gpl-3.0.en.html";
 
         /**
          * License information for the application.
