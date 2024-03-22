@@ -12,6 +12,7 @@ Auth Guard is a comprehensive user authentication and authorization system.
 - [Usage](#usage)
 - [API Documentation](#api-documentation)
 - [Contributing](#contributing)
+- [License](#license)
 
 ## Introduction
 
@@ -76,3 +77,7 @@ Contributions are welcome! If you'd like to contribute to Auth Guard, please fol
 3. Commit your changes: `git commit -am 'Add some feature'`
 4. Push to the branch: `git push origin feature/your-feature-name`
 5. Submit a pull request
+
+## License
+
+This project is licensed under the [GPLv3] License - see the [LICENSE](LICENSE) file for details.
