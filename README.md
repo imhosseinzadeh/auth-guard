@@ -21,7 +21,7 @@ Auth Guard is a comprehensive user authentication and authorization system desig
 ## Features
 
 - User registration and login
-- Policy-based access control (PBAC)
+- Permission-based access control (PBAC)
 - JWT token-based authentication
 - Secure password hashing
 - RESTful API endpoints for user management
