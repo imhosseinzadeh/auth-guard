@@ -48,7 +48,7 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, JwtUtil jwtUtil) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, AuthenticationManager authenticationManager, JwtUtil jwtUtil) throws Exception {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
@@ -67,7 +67,7 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new EmailPasswordAuthenticationFilter(authenticationManager, jwtUtil), AnonymousAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthorizationFilter(userDetailsService, jwtUtil), AuthorizationFilter.class)
+                .addFilterBefore(new JWTAuthorizationFilter(jwtUtil), AuthorizationFilter.class)
                 .build();
     }
 

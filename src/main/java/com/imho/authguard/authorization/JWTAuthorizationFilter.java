@@ -11,8 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -24,7 +22,6 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION_HEADER_STRING = "Authorization";
     private static final String TOKEN_BEARER_PREFIX = "Bearer ";
 
-    private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
 
     @Override
@@ -39,12 +36,11 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         DecodedJWT decodedJWT = jwtUtil.decode(token);
 
         String email = decodedJWT.getSubject();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
         Claim authoritiesClaim = decodedJWT.getClaim("authorities");
         List<SimpleGrantedAuthority> authorities = authoritiesClaim.asList(SimpleGrantedAuthority.class);
 
-        EmailPasswordAuthenticationToken authenticationToken = EmailPasswordAuthenticationToken.authenticated(userDetails, null, authorities);
+        EmailPasswordAuthenticationToken authenticationToken = EmailPasswordAuthenticationToken.authenticated(email, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
