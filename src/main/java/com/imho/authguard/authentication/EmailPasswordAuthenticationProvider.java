@@ -29,7 +29,8 @@ public class EmailPasswordAuthenticationProvider implements AuthenticationProvid
         String requestPassword = authentication.getCredentials().toString();
         String storedPassword = user.getPassword();
 
-        if (!passwordEncoder.matches(requestPassword, storedPassword)) throw new BadCredentialsException("");
+        if (!passwordEncoder.matches(requestPassword, storedPassword))
+            throw new BadCredentialsException("Password doesn't match");
 
         user.eraseCredentials();
 

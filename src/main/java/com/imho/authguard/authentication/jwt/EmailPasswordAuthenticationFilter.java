@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,6 @@ public class EmailPasswordAuthenticationFilter extends AbstractAuthenticationPro
     public static final AntPathRequestMatcher LOGIN_ANT_PATH_REQUEST_MATCHER = new AntPathRequestMatcher("/api/v1/users/login", "POST");
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final EmailPasswordAuthenticationConverter authenticationConverter = new EmailPasswordAuthenticationConverter(objectMapper);
-
 
     private final JwtUtil jwtUtil;
 
@@ -71,10 +71,10 @@ public class EmailPasswordAuthenticationFilter extends AbstractAuthenticationPro
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
 
         Map<String, String> errorResponse = new HashMap<>();
-        if (failed instanceof UsernameNotFoundException)
-            errorResponse.put("error", "Invalid email or password");
+        if (failed instanceof UsernameNotFoundException || failed instanceof BadCredentialsException)
+            errorResponse.put("error", "Incorrect email address or password. Please check your credentials and try again.");
         else
-            errorResponse.put("error", "Authentication failed");
+            errorResponse.put("error", "Authentication failed. If the issue persists, please contact support for assistance.");
 
         writeJsonResponse(response, errorResponse, HttpStatus.UNAUTHORIZED.value());
 
