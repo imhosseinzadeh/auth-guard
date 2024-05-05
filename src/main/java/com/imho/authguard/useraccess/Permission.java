@@ -1,11 +1,12 @@
 package com.imho.authguard.useraccess;
 
 import com.imho.authguard.common.AbstractEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.UUID;
 
 /**
  * Represents a permission in the authorization system.
@@ -14,12 +15,11 @@ import java.util.UUID;
 @Table(schema = "authentication", name = "permissions")
 @Getter
 @Setter
-public class Permission extends AbstractEntity<UUID> {
+public class Permission extends AbstractEntity<Short> {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "permission_id")
-    private UUID id;
+    private Short id;
 
     private String name;
 

@@ -15,11 +15,11 @@ import java.util.UUID;
 @Table(schema = "authentication", name = "roles")
 @Getter
 @Setter
-public class Role extends AbstractEntity<UUID> {
+public class Role extends AbstractEntity<Short> {
 
     @Id
     @Column(name = "role_id")
-    private UUID id;
+    private Short id;
 
     private String name;
 

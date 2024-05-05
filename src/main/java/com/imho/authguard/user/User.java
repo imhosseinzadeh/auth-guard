@@ -1,10 +1,9 @@
 package com.imho.authguard.user;
 
-import com.imho.authguard.useraccess.Role;
 import com.imho.authguard.common.AbstractEntity;
+import com.imho.authguard.useraccess.Role;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,8 +32,14 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    private String password;
+//    private String firstname;
+//    private String lastname;
+
+//    @Column(name = "phone_number")
+//    private String phoneNumber;
+
+    @Column(name = "hashed_password", nullable = false)
+    private String hashedPassword;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createAt;
@@ -69,6 +74,11 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
                 role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName())));
 
         return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return hashedPassword;
     }
 
     /**
@@ -113,7 +123,7 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
 
     @Override
     public void eraseCredentials() {
-        this.password = null;
+        this.hashedPassword = null;
     }
 
     @Override
@@ -121,7 +131,7 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
         return "User{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
+                ", password='" + hashedPassword + '\'' +
                 ", createAt=" + createAt +
                 '}';
     }

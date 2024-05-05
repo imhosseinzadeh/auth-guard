@@ -10,16 +10,16 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create users table to store user information
 CREATE TABLE authentication.users
 (
-    user_id    UUID PRIMARY KEY         DEFAULT gen_random_uuid(),
-    email      VARCHAR(255) NOT NULL UNIQUE,
-    password   VARCHAR(255) NOT NULL, -- Hashed password of the user
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    user_id         UUID PRIMARY KEY,
+    email           VARCHAR(100) NOT NULL UNIQUE,
+    hashed_password VARCHAR(255) NOT NULL, -- Hashed password of the user
+    created_at      TIMESTAMP WITH TIME ZONE
 );
 
 -- Create roles table to define user roles
 CREATE TABLE authentication.roles
 (
-    role_id     UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    role_id     SMALLINT PRIMARY KEY,
     name        VARCHAR(100) NOT NULL,
     description VARCHAR(255)
 );
@@ -28,14 +28,14 @@ CREATE TABLE authentication.roles
 CREATE TABLE authentication.users_roles
 (
     user_id UUID REFERENCES authentication.users (user_id) ON DELETE CASCADE,
-    role_id UUID REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
+    role_id SMALLINT REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
     PRIMARY KEY (user_id, role_id)
 );
 
 -- Create permissions table to define permissions for roles
 CREATE TABLE authentication.permissions
 (
-    permission_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    permission_id SMALLINT PRIMARY KEY,
     name          VARCHAR(100) NOT NULL,
     description   VARCHAR(255)
 );
@@ -43,8 +43,8 @@ CREATE TABLE authentication.permissions
 -- Create roles_permissions table to establish a many-to-many relationship between roles and permissions
 CREATE TABLE authentication.roles_permissions
 (
-    role_id       UUID REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
-    permission_id UUID REFERENCES authentication.permissions (permission_id) ON DELETE CASCADE,
+    role_id       SMALLINT REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
+    permission_id SMALLINT REFERENCES authentication.permissions (permission_id) ON DELETE CASCADE,
     PRIMARY KEY (role_id, permission_id)
 );
 
