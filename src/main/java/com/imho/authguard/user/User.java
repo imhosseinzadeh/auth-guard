@@ -22,6 +22,9 @@ import java.util.UUID;
 @Table(schema = "authentication", name = "users")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User extends AbstractEntity<UUID> implements UserDetails, CredentialsContainer {
 
     @Id
@@ -32,17 +35,19 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
     @Column(nullable = false, unique = true)
     private String email;
 
-//    private String firstname;
-//    private String lastname;
+    private String firstname;
+    private String lastname;
 
-//    @Column(name = "phone_number")
-//    private String phoneNumber;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Column(name = "hashed_password", nullable = false)
     private String hashedPassword;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createAt;
+
+    private Boolean enabled;
 
     @ManyToMany
     @JoinTable(
@@ -118,7 +123,7 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
      */
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override
@@ -126,13 +131,4 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
         this.hashedPassword = null;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + hashedPassword + '\'' +
-                ", createAt=" + createAt +
-                '}';
-    }
 }

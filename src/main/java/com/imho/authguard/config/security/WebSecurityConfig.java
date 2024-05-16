@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -61,8 +62,9 @@ public class WebSecurityConfig {
                                         antMatcher("/index.html"),
                                         antMatcher("/v3/api-docs/**"),
                                         antMatcher("/swagger-ui/**"),
-                                        EmailPasswordAuthenticationFilter.LOGIN_ANT_PATH_REQUEST_MATCHER
-                                )
+                                        antMatcher(HttpMethod.POST, "/api/v1/users/register"),
+                                        antMatcher(HttpMethod.PUT, "/api/v1/users/confirm-registration"),
+                                        EmailPasswordAuthenticationFilter.LOGIN_ANT_PATH_REQUEST_MATCHER)
                                 .permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

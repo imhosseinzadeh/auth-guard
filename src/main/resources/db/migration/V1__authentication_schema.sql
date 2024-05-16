@@ -12,8 +12,22 @@ CREATE TABLE authentication.users
 (
     user_id         UUID PRIMARY KEY,
     email           VARCHAR(100) NOT NULL UNIQUE,
+    firstname       VARCHAR(100),
+    lastname        VARCHAR(100),
+    phone_number    VARCHAR(15),
     hashed_password VARCHAR(255) NOT NULL, -- Hashed password of the user
-    created_at      TIMESTAMP WITH TIME ZONE
+    created_at      TIMESTAMP WITH TIME ZONE,
+    enabled         BOOLEAN
+);
+
+CREATE TABLE authentication.verification_token
+(
+    verification_token_id BIGSERIAL PRIMARY KEY,
+    token                 VARCHAR(255) NOT NULL,
+    created_at            TIMESTAMP WITH TIME ZONE,
+    expires_at            TIMESTAMP WITH TIME ZONE,
+    verified_at           TIMESTAMP WITH TIME ZONE,
+    user_id               UUID REFERENCES authentication.users (user_id)
 );
 
 -- Create roles table to define user roles
