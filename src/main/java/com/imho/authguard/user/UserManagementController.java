@@ -7,10 +7,7 @@ import com.imho.authguard.user.request.SignupRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -33,11 +30,11 @@ public class UserManagementController {
     }
 
     @PutMapping("/change-password")
-    public void changePassword(Principal principal, @RequestBody ChangePasswordRequest changePasswordRequest) {
-        String oldPassword = changePasswordRequest.oldPassword();
-        String newPassword = changePasswordRequest.newPassword();
+    public void changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+        String rawOldPassword = changePasswordRequest.oldPassword();
+        String rawNewPassword = changePasswordRequest.newPassword();
 
-        userManagementService.changePassword(principal, oldPassword, newPassword);
+        userManagementService.changePassword(rawOldPassword, rawNewPassword);
     }
 
 }

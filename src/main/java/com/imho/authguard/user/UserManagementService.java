@@ -5,6 +5,8 @@ import com.imho.authguard.user.registeration.token.VerificationTokenService;
 import com.imho.authguard.useraccess.Role;
 import com.imho.authguard.useraccess.RoleRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,13 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
+import java.util.Optional;
 import java.util.Set;
 
 /**
  * Service class for managing user details by email.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserManagementService implements UserDetailsService {
 
@@ -64,7 +67,8 @@ public class UserManagementService implements UserDetailsService {
 
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
-        Role userRole = roleRepository.findByName("user").orElseThrow();
+        Role userRole = roleRepository.findByName("user")
+                .orElseThrow(() -> new IllegalStateException("Default role 'user' not found"));
 
         User user = User.builder()
                 .email(email)
@@ -78,21 +82,34 @@ public class UserManagementService implements UserDetailsService {
         VerificationToken verificationToken = VerificationToken.generateVerificationToken(user);
         verificationTokenService.save(verificationToken);
 
+        log.info("Registered user with email: {}", email);
         return verificationToken;
     }
 
     @Transactional
-    public void changePassword(Principal principal, String oldPassword, String newPassword) {
-        User user = (User) this.loadUserByUsername(principal.getName());
+    public void changePassword(String rawOldPassword, String rawNewPassword) {
+        User user = getCurrentUser();
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(rawOldPassword, user.getPassword())) {
             throw new IllegalArgumentException("Incorrect old password");
         }
 
-        String encodedNewPassword = passwordEncoder.encode(newPassword);
+        String encodedNewPassword = passwordEncoder.encode(rawNewPassword);
         user.setHashedPassword(encodedNewPassword);
 
         userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
+    protected User getCurrentUser() {
+        String email = Optional.ofNullable(
+                        SecurityContextHolder
+                                .getContext()
+                                .getAuthentication()
+                                .getPrincipal())
+                .map(Object::toString)
+                .orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
+
+        return (User) loadUserByUsername(email);
+    }
 }
