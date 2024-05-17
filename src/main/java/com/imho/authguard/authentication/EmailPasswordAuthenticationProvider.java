@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,10 @@ public class EmailPasswordAuthenticationProvider implements AuthenticationProvid
 
         if (!passwordEncoder.matches(requestPassword, storedPassword))
             throw new BadCredentialsException("Password doesn't match");
+
+        if (!user.isEnabled()) {
+            throw new DisabledException("User account is disabled");
+        }
 
         user.eraseCredentials();
 
