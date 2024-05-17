@@ -6,6 +6,7 @@ import com.imho.authguard.user.request.ChangePasswordRequest;
 import com.imho.authguard.user.request.SignupRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,21 +21,31 @@ public class UserManagementController {
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody @Valid SignupRequest signupRequest) {
         VerificationToken verificationToken = this.userManagementService.registerUser(signupRequest.email(), signupRequest.password());
-        return ResponseEntity.ok(verificationToken.getToken());
+        return new ResponseEntity<>(verificationToken.getToken(), HttpStatus.CREATED);
     }
 
     @PutMapping("/confirm-registration")
     public ResponseEntity<String> confirmRegistration(@RequestParam("verificationToken") String verificationToken) {
-        String verifiedUserEmail = verificationTokenService.verify(verificationToken);
-        return ResponseEntity.ok().body(verifiedUserEmail);
+        try {
+            String verifiedUserEmail = verificationTokenService.verify(verificationToken);
+            return ResponseEntity.ok().body(verifiedUserEmail);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid verification token");
+        }
     }
 
     @PutMapping("/change-password")
-    public void changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
-        String rawOldPassword = changePasswordRequest.oldPassword();
-        String rawNewPassword = changePasswordRequest.newPassword();
+    public ResponseEntity<String> changePassword(@RequestBody @Valid ChangePasswordRequest changePasswordRequest) {
+        try {
+            String rawOldPassword = changePasswordRequest.oldPassword();
+            String rawNewPassword = changePasswordRequest.newPassword();
 
-        userManagementService.changePassword(rawOldPassword, rawNewPassword);
+            userManagementService.changePassword(rawOldPassword, rawNewPassword);
+            return ResponseEntity.ok("Password changed successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Failed to change password: " + e.getMessage());
+        }
     }
 
 }
