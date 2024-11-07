@@ -44,7 +44,6 @@ public class UserManagementService implements UserDetailsService {
      * @throws IllegalArgumentException  if the provided email is null or empty.
      */
     @Override
-    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email cannot be null or blank");
@@ -100,7 +99,6 @@ public class UserManagementService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    @Transactional(readOnly = true)
     protected User getCurrentUser() {
         String email = Optional.ofNullable(
                         SecurityContextHolder
