@@ -1,8 +1,8 @@
 package com.imho.authguard.security.authentication.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.imho.authguard.domain.entity.user.User;
 import com.imho.authguard.security.JwtUtil;
-import com.imho.authguard.user.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

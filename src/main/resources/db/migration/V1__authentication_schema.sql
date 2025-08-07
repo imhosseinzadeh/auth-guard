@@ -10,35 +10,44 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Create users table to store user information
 CREATE TABLE authentication.users
 (
-    user_id         UUID PRIMARY KEY,
-    email           VARCHAR(100) NOT NULL UNIQUE,
-    firstname       VARCHAR(100),
-    lastname        VARCHAR(100),
-    phone_number    VARCHAR(15),
-    hashed_password VARCHAR(255) NOT NULL, -- Hashed password of the user
-    created_at      TIMESTAMP WITH TIME ZONE,
-    enabled         BOOLEAN
+    user_id      UUID PRIMARY KEY,
+    email        VARCHAR(100) NOT NULL UNIQUE,
+    firstname    VARCHAR(100),
+    lastname     VARCHAR(100),
+    phone_number VARCHAR(15),
+    password     VARCHAR(255) NOT NULL,
+    created_at   TIMESTAMPTZ  NOT NULL,
+    updated_at   TIMESTAMPTZ  NOT NULL,
+    version      BIGINT,
+    enabled      BOOLEAN      NOT NULL DEFAULT true
 );
 
-CREATE TABLE authentication.verification_token
+-- Create verification_codes table
+CREATE TABLE authentication.verification_codes
 (
-    verification_token_id BIGSERIAL PRIMARY KEY,
-    token                 VARCHAR(255) NOT NULL,
-    created_at            TIMESTAMP WITH TIME ZONE,
-    expires_at            TIMESTAMP WITH TIME ZONE,
-    verified_at           TIMESTAMP WITH TIME ZONE,
-    user_id               UUID REFERENCES authentication.users (user_id)
+    verification_code_id BIGSERIAL PRIMARY KEY,
+    code                 VARCHAR(255) NOT NULL,
+    issued_at            TIMESTAMP WITH TIME ZONE,
+    expires_at           TIMESTAMPTZ  NOT NULL,
+    verified_at          TIMESTAMPTZ,
+    created_at           TIMESTAMPTZ  NOT NULL,
+    updated_at           TIMESTAMPTZ  NOT NULL,
+    version              BIGINT,
+    user_id              UUID REFERENCES authentication.users (user_id) ON DELETE CASCADE
 );
 
 -- Create roles table to define user roles
 CREATE TABLE authentication.roles
 (
     role_id     SMALLINT PRIMARY KEY,
-    name        VARCHAR(100) NOT NULL,
-    description VARCHAR(255)
+    name        VARCHAR(100) NOT NULL UNIQUE NOT NULL,
+    description VARCHAR(255),
+    created_at  TIMESTAMPTZ  NOT NULL,
+    updated_at  TIMESTAMPTZ  NOT NULL,
+    version     BIGINT
 );
 
--- Create users_roles table to establish a many-to-many relationship between users and roles
+-- Create users_roles table for many-to-many relationship between users and roles
 CREATE TABLE authentication.users_roles
 (
     user_id UUID REFERENCES authentication.users (user_id) ON DELETE CASCADE,
@@ -46,15 +55,18 @@ CREATE TABLE authentication.users_roles
     PRIMARY KEY (user_id, role_id)
 );
 
--- Create permissions table to define permissions for roles
+-- Create permissions table
 CREATE TABLE authentication.permissions
 (
     permission_id SMALLINT PRIMARY KEY,
-    name          VARCHAR(100) NOT NULL,
-    description   VARCHAR(255)
+    name          VARCHAR(100) NOT NULL UNIQUE,
+    description   VARCHAR(255),
+    created_at    TIMESTAMPTZ  NOT NULL,
+    updated_at    TIMESTAMPTZ  NOT NULL,
+    version       BIGINT
 );
 
--- Create roles_permissions table to establish a many-to-many relationship between roles and permissions
+-- Create roles_permissions table for many-to-many relationship
 CREATE TABLE authentication.roles_permissions
 (
     role_id       SMALLINT REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
@@ -62,8 +74,8 @@ CREATE TABLE authentication.roles_permissions
     PRIMARY KEY (role_id, permission_id)
 );
 
--- Add indexes for foreign keys to improve query performance
-CREATE INDEX ON authentication.users_roles (user_id);
-CREATE INDEX ON authentication.users_roles (role_id);
-CREATE INDEX ON authentication.roles_permissions (role_id);
-CREATE INDEX ON authentication.roles_permissions (permission_id);
+-- Add indexes for foreign keys
+CREATE INDEX idx_users_roles_user_id ON authentication.users_roles (user_id);
+CREATE INDEX idx_users_roles_role_id ON authentication.users_roles (role_id);
+CREATE INDEX idx_roles_permissions_role_id ON authentication.roles_permissions (role_id);
+CREATE INDEX idx_roles_permissions_permission_id ON authentication.roles_permissions (permission_id);

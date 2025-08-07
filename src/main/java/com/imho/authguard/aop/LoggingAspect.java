@@ -1,4 +1,4 @@
-package com.imho.authguard.common;
+package com.imho.authguard.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

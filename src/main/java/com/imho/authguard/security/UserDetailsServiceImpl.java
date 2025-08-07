@@ -1,6 +1,6 @@
 package com.imho.authguard.security;
 
-import com.imho.authguard.user.UserRepository;
+import com.imho.authguard.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

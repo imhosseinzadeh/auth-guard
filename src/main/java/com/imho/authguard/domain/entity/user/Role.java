@@ -1,12 +1,11 @@
-package com.imho.authguard.useraccess;
+package com.imho.authguard.domain.entity.user;
 
-import com.imho.authguard.common.AbstractEntity;
+import com.imho.authguard.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Represents a role in the authorization system.
@@ -15,12 +14,13 @@ import java.util.UUID;
 @Table(schema = "authentication", name = "roles")
 @Getter
 @Setter
-public class Role extends AbstractEntity<Short> {
+public class Role extends BaseEntity<Short> {
 
     @Id
     @Column(name = "role_id")
     private Short id;
 
+    @Column(unique = true, nullable = false)
     private String name;
 
     private String description;

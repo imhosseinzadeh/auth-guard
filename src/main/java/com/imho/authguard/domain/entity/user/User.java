@@ -1,7 +1,6 @@
-package com.imho.authguard.user;
+package com.imho.authguard.domain.entity.user;
 
-import com.imho.authguard.common.AbstractEntity;
-import com.imho.authguard.useraccess.Role;
+import com.imho.authguard.domain.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.CredentialsContainer;
@@ -25,7 +24,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User extends AbstractEntity<UUID> implements UserDetails, CredentialsContainer {
+public class User extends BaseEntity<UUID> implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,17 +35,16 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
     private String email;
 
     private String firstname;
+
     private String lastname;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @Column(name = "hashed_password", nullable = false)
-    private String hashedPassword;
+    @Column(name = "password", nullable = false)
+    private String password;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createAt;
 
+    @Column(nullable = false)
     private Boolean enabled;
 
     @ManyToMany
@@ -82,53 +80,18 @@ public class User extends AbstractEntity<UUID> implements UserDetails, Credentia
     }
 
     @Override
-    public String getPassword() {
-        return hashedPassword;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getUsername() {
         return email;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEnabled() {
-        return enabled;
+    public String getPassword() {
+        return password;
     }
 
     @Override
     public void eraseCredentials() {
-        this.hashedPassword = null;
+        this.password = null;
     }
 
 }
