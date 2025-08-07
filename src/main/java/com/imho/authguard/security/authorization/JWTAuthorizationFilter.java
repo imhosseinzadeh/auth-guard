@@ -1,14 +1,15 @@
-package com.imho.authguard.authorization;
+package com.imho.authguard.security.authorization;
 
-import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.imho.authguard.authentication.EmailPasswordAuthenticationToken;
-import com.imho.authguard.authentication.jwt.JwtUtil;
+import com.imho.authguard.security.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
     private static final String AUTHORIZATION_HEADER_STRING = "Authorization";
@@ -33,14 +35,24 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
         }
 
         String token = authorizationHeader.replace(TOKEN_BEARER_PREFIX, "");
-        DecodedJWT decodedJWT = jwtUtil.decode(token);
+        DecodedJWT decodedJWT;
+        try {
+            decodedJWT = jwtUtil.decode(token);
+        } catch (JWTVerificationException e) {
+            // Log and continue without setting auth (reject or anonymous)
+            log.warn("Invalid JWT token: {}", e.getMessage());
 
-        String email = decodedJWT.getSubject();
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-        Claim authoritiesClaim = decodedJWT.getClaim("authorities");
-        List<SimpleGrantedAuthority> authorities = authoritiesClaim.asList(SimpleGrantedAuthority.class);
+        String username = decodedJWT.getSubject();
 
-        EmailPasswordAuthenticationToken authenticationToken = EmailPasswordAuthenticationToken.authenticated(email, null, authorities);
+        List<SimpleGrantedAuthority> authorities = decodedJWT
+                .getClaim("authorities")
+                .asList(SimpleGrantedAuthority.class);
+
+        UsernamePasswordAuthenticationToken authenticationToken = UsernamePasswordAuthenticationToken.authenticated(username, null, authorities);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);

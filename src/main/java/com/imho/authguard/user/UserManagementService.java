@@ -7,7 +7,6 @@ import com.imho.authguard.useraccess.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,7 +22,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserManagementService implements UserDetailsService {
+public class UserManagementService {
 
     private static final String USER_NOT_FOUND_MSG = "User not found with email: %s";
     private static final String EMPTY_AUTHORITIES_MSG = "User with email %s has no authorities assigned.";
@@ -31,33 +30,11 @@ public class UserManagementService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
+    private final UserDetailsService userDetailsService;
+
     private final VerificationTokenService verificationTokenService;
 
     private final PasswordEncoder passwordEncoder;
-
-    /**
-     * Locates the user based on the given email.
-     *
-     * @param email the email identifying the user whose data is required.
-     * @return a fully populated UserDetails object representing the user.
-     * @throws UsernameNotFoundException if the user could not be found or has no authorities.
-     * @throws IllegalArgumentException  if the provided email is null or empty.
-     */
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        if (email == null || email.isBlank()) {
-            throw new IllegalArgumentException("Email cannot be null or blank");
-        }
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format(USER_NOT_FOUND_MSG, email)));
-
-        if (user.getAuthorities().isEmpty()) {
-            throw new UsernameNotFoundException(String.format(EMPTY_AUTHORITIES_MSG, email));
-        }
-
-        return user;
-    }
 
     @Transactional
     public VerificationToken registerUser(String email, String rawPassword) {
@@ -108,6 +85,6 @@ public class UserManagementService implements UserDetailsService {
                 .map(Object::toString)
                 .orElseThrow(() -> new UsernameNotFoundException("Current user not found"));
 
-        return (User) loadUserByUsername(email);
+        return (User) userDetailsService.loadUserByUsername(email);
     }
 }
