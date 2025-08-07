@@ -38,11 +38,8 @@ public class User extends BaseEntity<UUID> implements UserDetails, CredentialsCo
 
     private String lastname;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createAt;
 
     @Column(nullable = false)
     private Boolean enabled;
