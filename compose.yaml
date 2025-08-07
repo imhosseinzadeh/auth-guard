@@ -1,8 +1,9 @@
-name: auth-guard
+name: auth_guard
 
 services:
   postgres:
-    image: postgres:17.2
+    image: postgres:17.5
+    container_name: auth_guard_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -12,7 +13,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - auth-guard-network
+      - network
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
       interval: 10s
@@ -21,7 +22,8 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4:8.14
+    image: dpage/pgadmin4:9.6.0
+    container_name: auth_guard_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
@@ -30,18 +32,19 @@ services:
     ports:
       - "5050:80"
     networks:
-      - auth-guard-network
+      - network
     depends_on:
       postgres:
         condition: service_healthy
     restart: unless-stopped
 
 networks:
-  auth-guard-network:
+  network:
+    name: auth_guard_network
     driver: bridge
 
 volumes:
   postgres_data:
-    name: auth-guard-postgres-data
+    name: auth_guard_postgres_data
   pgadmin_data:
-    name: auth-guard-pgadmin-data
+    name: auth_guard_pgadmin_data
