@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_guard
+    username: postgres
+    password: secret
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  mail:
+    host: smtp.gmail.com
+    port: 465
+    username:
+    password:
+    ssl:
+      enabled: true
+
+logging:
+  level:
+    root: info
+    sql: debug
+    web: debug
+    org.springframework.security: debug
+  file:
+    name: logs/application.log
+  logback:
+    rollingpolicy:
+      clean-history-on-start: true
+
+token:
+  secret: a&strong&secret&for&jwt&token
+  access:
+    expire: 3600
+  refresh:
+    expire: 86400
