@@ -10,7 +10,7 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(schema = "authentication", name = "verification_code")
+@Table(schema = "authentication", name = "verification_codes")
 @Getter
 @Setter
 @NoArgsConstructor
