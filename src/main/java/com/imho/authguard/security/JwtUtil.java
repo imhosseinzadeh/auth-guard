@@ -18,17 +18,17 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
-    @Value("${spring.application.name}")
+    @Value("${jwt.issuer}")
     private String issuer;
 
-    @Value("${token.access.expiry:3600}")   // seconds
+    @Value("${jwt.secret}")
+    private String secret;
+
+    @Value("${jwt.access.token.expiry}")
     private long accessTokenExpirySeconds;
 
-    @Value("${token.refresh.expiry:86400}") // seconds
+    @Value("${jwt.refresh.token.expiry}")
     private long refreshTokenExpirySeconds;
-
-    @Value("${token.secret:asecrectpasswordfortoken}")
-    private String secret;
 
     /**
      * Generates an access token for the given user.

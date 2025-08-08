@@ -27,9 +27,12 @@ logging:
     rollingpolicy:
       clean-history-on-start: true
 
-token:
-  secret: a&strong&secret&for&jwt&token
+jwt:
+  issuer: ${spring.application.name}
+  secret: Iufzg3THuUEyDUbQgILr5CJEQDX1vUyR4+wjYHjtUP0=
   access:
-    expire: 3600
+    token:
+      expiry: 3600
   refresh:
-    expire: 86400
+    token:
+      expiry: 86400
