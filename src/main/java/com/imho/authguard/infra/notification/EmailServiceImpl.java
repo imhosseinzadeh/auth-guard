@@ -1,12 +1,11 @@
 package com.imho.authguard.infra.notification;
 
 import com.imho.authguard.common.util.MaskingUtils;
-import com.imho.authguard.exception.MailSendingException;
+import com.imho.authguard.exception.infrastructure.MailSendingException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -67,7 +66,7 @@ public class EmailServiceImpl implements EmailService {
     private void handleSendFailure(String to, Exception e) {
         String errorMessage = String.format("Failed to send email to '%s'. Reason: %s", to, e.getMessage());
         log.error(errorMessage, e);
-        throw new MailSendingException("Email Delivery Failed", errorMessage, HttpStatus.INTERNAL_SERVER_ERROR, e);
+        throw new MailSendingException("Email Delivery Failed", errorMessage, e);
     }
 
 }

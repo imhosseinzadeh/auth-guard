@@ -1,7 +1,12 @@
 package com.imho.authguard.exception;
 
+import com.imho.authguard.exception.domain.DomainException;
+import com.imho.authguard.exception.domain.NotFoundException;
+import com.imho.authguard.exception.domain.confilict.ConflictException;
+import com.imho.authguard.exception.domain.expired.ExpiredException;
+import com.imho.authguard.exception.infrastructure.InfrastructureException;
 import com.imho.authguard.infra.i18n.MessageResolver;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -9,41 +14,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.context.request.WebRequest;
 
-import java.net.URI;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
-@AllArgsConstructor
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     private final MessageResolver messageResolver;
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleUnexpectedException(Exception ex, WebRequest request) {
-        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+    @ExceptionHandler(DomainException.class)
+    public ResponseEntity<ProblemDetail> handleDomainException(DomainException ex) {
+        log.error("Handled DomainException: {}", ex.getMessage(), ex);
 
-        // fallback for unhandled exceptions
-        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        detail.setTitle(messageResolver.getMessage("error.unexpected.title"));
-        detail.setDetail(messageResolver.getMessage("error.unexpected.detail"));
-        detail.setInstance(URI.create(request.getContextPath()));
-        detail.setProperty("timestamp", ZonedDateTime.now());
+        HttpStatus status = resolveHttpStatus(ex);
+        ProblemDetail problem = buildProblemDetail(status, ex.getTitle(), ex.getMessage());
 
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(detail);
+                .status(status)
+                .body(problem);
     }
 
-    @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<ProblemDetail> handleGlobalException(GlobalException ex) {
-        log.error("Handled GlobalException: {}", ex.getMessage(), ex);
+    @ExceptionHandler(InfrastructureException.class)
+    public ResponseEntity<ProblemDetail> handleInfrastructureException(InfrastructureException ex) {
+        log.error("Handled InfrastructureException: {}", ex.getMessage(), ex);
 
         return ResponseEntity
                 .status(ex.getStatusCode())
@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> handleValidationException(MethodArgumentNotValidException ex) {
+        String title = messageResolver.getMessage("error.validation.title");
+        String detail = messageResolver.getMessage("error.validation.detail");
+
+        ProblemDetail problem = buildProblemDetail(HttpStatus.BAD_REQUEST, title, detail);
+
+        // Set validation errors
         List<Map<String, String>> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -59,14 +65,37 @@ public class GlobalExceptionHandler {
                         "field", error.getField(),
                         "message", Optional.ofNullable(error.getDefaultMessage()).orElse("Validation error")))
                 .toList();
-
-        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
-        problem.setTitle(messageResolver.getMessage("error.validation.title"));
-        problem.setDetail(messageResolver.getMessage("error.validation.detail"));
         problem.setProperty("errors", errors);
-        problem.setProperty("timestamp", ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
 
         return ResponseEntity.badRequest().body(problem);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ProblemDetail> handleUnexpectedException(Exception ex) {
+        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+
+        String title = messageResolver.getMessage("error.unexpected.title");
+        String detail = messageResolver.getMessage("error.unexpected.detail");
+        ProblemDetail problem = buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, title, detail);
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(problem);
+    }
+
+    private HttpStatus resolveHttpStatus(DomainException ex) {
+        if (ex instanceof NotFoundException) return HttpStatus.NOT_FOUND;
+        if (ex instanceof ConflictException) return HttpStatus.CONFLICT;
+        if (ex instanceof ExpiredException) return HttpStatus.GONE;
+        return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    private ProblemDetail buildProblemDetail(HttpStatus status, String title, String detail) {
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
+        problem.setTitle(title);
+        problem.setProperty("timestamp", ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
+        problem.setProperty("correlationId", UUID.randomUUID().toString());
+        return problem;
     }
 
 }
