@@ -1,4 +1,4 @@
-package com.imho.authguard.i18n;
+package com.imho.authguard.infra.i18n;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +20,9 @@ public class I18NConfiguration {
     public MessageSource messageSource() {
         ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
         source.setBasenames(
-                "classpath:i18n/messages",
-                "classpath:i18n/errors",
-                "classpath:i18n/validation"
+                "classpath:messages/messages",
+                "classpath:messages/errors",
+                "classpath:messages/validation"
         );
         source.setDefaultEncoding("UTF-8");
         source.setFallbackToSystemLocale(false);

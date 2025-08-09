@@ -1,6 +1,6 @@
 package com.imho.authguard.exception;
 
-import com.imho.authguard.i18n.MessageResolver;
+import com.imho.authguard.infra.i18n.MessageResolver;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

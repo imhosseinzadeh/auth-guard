@@ -1,4 +1,4 @@
-package com.imho.authguard.i18n;
+package com.imho.authguard.infra.i18n;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

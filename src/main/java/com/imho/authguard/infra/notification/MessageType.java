@@ -1,4 +1,4 @@
-package com.imho.authguard.core.notification;
+package com.imho.authguard.infra.notification;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

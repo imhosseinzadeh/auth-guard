@@ -1,4 +1,4 @@
-package com.imho.authguard.core.notification;
+package com.imho.authguard.infra.notification;
 
 import com.imho.authguard.common.util.MaskingUtils;
 import com.imho.authguard.exception.MailSendingException;
