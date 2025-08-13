@@ -1,7 +1,7 @@
 package com.imho.authguard.exception;
 
 import com.imho.authguard.exception.domain.DomainException;
-import com.imho.authguard.exception.domain.NotFoundException;
+import com.imho.authguard.exception.domain.notfound.NotFoundException;
 import com.imho.authguard.exception.domain.confilict.ConflictException;
 import com.imho.authguard.exception.domain.expired.ExpiredException;
 import com.imho.authguard.exception.infrastructure.InfrastructureException;
