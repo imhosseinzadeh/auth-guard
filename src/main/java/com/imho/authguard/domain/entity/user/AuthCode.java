@@ -14,7 +14,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class VerificationCode extends BaseEntity<Long> {
+public class AuthCode extends BaseEntity<Long> {
 
     private static final int EXPIRES_IN_MINUTE = 15;
 
@@ -38,7 +38,7 @@ public class VerificationCode extends BaseEntity<Long> {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private VerificationCode(String code, ZonedDateTime issuedAt, ZonedDateTime expiresAt, User user) {
+    private AuthCode(String code, ZonedDateTime issuedAt, ZonedDateTime expiresAt, User user) {
         this.code = code;
         this.issuedAt = issuedAt;
         this.expiresAt = expiresAt;
@@ -60,10 +60,10 @@ public class VerificationCode extends BaseEntity<Long> {
         this.verifiedAt = ZonedDateTime.now();
     }
 
-    public static VerificationCode generateVerificationToken(User user) {
+    public static AuthCode generateVerificationToken(User user) {
         ZonedDateTime now = ZonedDateTime.now();
 
-        return new VerificationCode(
+        return new AuthCode(
                 UUID.randomUUID().toString(),
                 now,
                 now.plusMinutes(EXPIRES_IN_MINUTE),
