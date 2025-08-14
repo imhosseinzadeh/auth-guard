@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.AuthenticationConverter;
 
@@ -22,8 +23,8 @@ public class AuthenticationRequestConverter implements AuthenticationConverter {
 
             return UsernamePasswordAuthenticationToken.unauthenticated(credentials.username(), credentials.password());
         } catch (IOException e) {
-
-            throw new RuntimeException("Error reading request body", e);
+            log.error("Failed to parse authentication request", e);
+            throw new AuthenticationServiceException("Invalid login request format", e);
         }
     }
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +31,9 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
         Map<String, String> errorResponse = new HashMap<>();
         if (exception instanceof UsernameNotFoundException || exception instanceof BadCredentialsException)
             errorResponse.put("error", "Incorrect username or password. Please check your credentials and try again.");
-        else
+        else if (exception instanceof AuthenticationServiceException) {
+            errorResponse.put("error", "Username and password must not be empty.");
+        } else
             errorResponse.put("error", "Authentication failed. If the issue persists, please contact support for assistance.");
 
         writeJsonResponse(response, errorResponse, HttpStatus.UNAUTHORIZED.value());
