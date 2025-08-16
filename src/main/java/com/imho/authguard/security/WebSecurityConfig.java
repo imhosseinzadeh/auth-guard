@@ -2,7 +2,7 @@ package com.imho.authguard.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imho.authguard.security.authentication.filter.JwtAuthenticationFilter;
-import com.imho.authguard.security.authorization.JWTAuthorizationFilter;
+import com.imho.authguard.security.authorization.JwtAuthorizationFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +68,7 @@ public class WebSecurityConfig {
                                 .anyRequest().authenticated())
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(authenticationManager, jwtUtil, objectMapper), AnonymousAuthenticationFilter.class)
-                .addFilterBefore(new JWTAuthorizationFilter(jwtUtil), AuthorizationFilter.class)
+                .addFilterBefore(new JwtAuthorizationFilter(jwtUtil), AuthorizationFilter.class)
                 .build();
     }
 
