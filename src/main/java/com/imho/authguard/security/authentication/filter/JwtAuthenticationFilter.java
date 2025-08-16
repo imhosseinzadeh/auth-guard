@@ -11,9 +11,7 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    public static final PathPatternRequestMatcher LOGIN_MATCHER = PathPatternRequestMatcher
-            .withDefaults()
-            .matcher(HttpMethod.POST, "/api/v1/auth/login");
+    public static final PathPatternRequestMatcher LOGIN_MATCHER = PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/tokens");
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtUtil jwtUtil, ObjectMapper objectMapper) {
         super(LOGIN_MATCHER, authenticationManager);
