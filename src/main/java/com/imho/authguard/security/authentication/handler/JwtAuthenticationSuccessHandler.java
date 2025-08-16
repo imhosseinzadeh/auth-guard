@@ -36,7 +36,7 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         // Create response
         Map<String, String> responseBody = Map.of(
-                "token", accessToken,
+                "access_token", accessToken,
                 "refresh_token", refreshToken,
                 "expires_at", expiresAtIso
         );
