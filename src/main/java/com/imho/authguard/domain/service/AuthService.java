@@ -7,11 +7,13 @@ import com.imho.authguard.exception.domain.DomainException;
 import com.imho.authguard.infra.notification.EmailService;
 import com.imho.authguard.infra.notification.MessageType;
 import com.imho.authguard.repository.UserRepository;
+import com.imho.authguard.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,9 @@ public class AuthService {
     private final OtpService otpService;
 
     private final EmailService emailService;
+    private final UserDetailsService userDetailsService;
+
+    private final JwtUtil jwtUtil;
 
     /**
      * Returns the currently authenticated user.
@@ -53,6 +58,14 @@ public class AuthService {
 
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Authenticated user not found with email: " + email));
+    }
+
+    @Transactional(readOnly = true)
+    public Map<String, String> generateFullToken(String refreshToken) {
+        final String email = jwtUtil.extractUsername(refreshToken);
+        final User user = (User) userDetailsService.loadUserByUsername(email);
+
+        return jwtUtil.generateTokens(user);
     }
 
     @Transactional

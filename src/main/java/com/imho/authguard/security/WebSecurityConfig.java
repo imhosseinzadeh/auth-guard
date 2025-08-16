@@ -63,6 +63,7 @@ public class WebSecurityConfig {
                                         PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/actuator/health"),
                                         PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/users"), // register api
                                         PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/auth/email-verification"),
+                                        PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/tokens/refresh"),
                                         JwtAuthenticationFilter.LOGIN_MATCHER)
                                 .permitAll()
                                 .anyRequest().authenticated())
