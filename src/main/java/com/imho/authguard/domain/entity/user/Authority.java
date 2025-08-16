@@ -9,16 +9,16 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Represents a permission in the authorization system.
+ * Represents an authority in the authorization system.
  */
 @Entity
-@Table(schema = "authentication", name = "permissions")
+@Table(schema = "authentication", name = "authorities")
 @Getter
 @Setter
-public class Permission extends BaseEntity<Short> {
+public class Authority extends BaseEntity<Short> {
 
     @Id
-    @Column(name = "permission_id")
+    @Column(name = "authority_id")
     private Short id;
 
     private String name;

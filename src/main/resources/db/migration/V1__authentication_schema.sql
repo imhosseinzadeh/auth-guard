@@ -54,21 +54,21 @@ CREATE TABLE authentication.users_roles
     PRIMARY KEY (user_id, role_id)
 );
 
-CREATE TABLE authentication.permissions
+CREATE TABLE authentication.authorities
 (
-    permission_id SMALLINT PRIMARY KEY,
-    name          VARCHAR(100) NOT NULL UNIQUE,
-    description   VARCHAR(255),
-    created_at    TIMESTAMPTZ  NOT NULL,
-    updated_at    TIMESTAMPTZ  NOT NULL,
-    version       BIGINT
+    authority_id SMALLINT PRIMARY KEY,
+    name         VARCHAR(100) NOT NULL UNIQUE,
+    description  VARCHAR(255),
+    created_at   TIMESTAMPTZ  NOT NULL,
+    updated_at   TIMESTAMPTZ  NOT NULL,
+    version      BIGINT
 );
 
-CREATE TABLE authentication.roles_permissions
+CREATE TABLE authentication.roles_authorities
 (
-    role_id       SMALLINT REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
-    permission_id SMALLINT REFERENCES authentication.permissions (permission_id) ON DELETE CASCADE,
-    PRIMARY KEY (role_id, permission_id)
+    role_id      SMALLINT REFERENCES authentication.roles (role_id) ON DELETE CASCADE,
+    authority_id SMALLINT REFERENCES authentication.authorities (authority_id) ON DELETE CASCADE,
+    PRIMARY KEY (role_id, authority_id)
 );
 
 -- Indexes for users_roles
@@ -76,8 +76,8 @@ CREATE INDEX idx_users_roles_user_id ON authentication.users_roles (user_id);
 CREATE INDEX idx_users_roles_role_id ON authentication.users_roles (role_id);
 
 -- Indexes for roles
-CREATE INDEX idx_roles_permissions_role_id ON authentication.roles_permissions (role_id);
-CREATE INDEX idx_roles_permissions_permission_id ON authentication.roles_permissions (permission_id);
+CREATE INDEX idx_roles_authorities_role_id ON authentication.roles_authorities (role_id);
+CREATE INDEX idx_roles_authorities_authority_id ON authentication.roles_authorities (authority_id);
 
 -- Indexes for one_time_passwords
 CREATE INDEX idx_otp_code ON authentication.otp (code);

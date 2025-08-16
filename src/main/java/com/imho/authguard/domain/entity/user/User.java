@@ -56,7 +56,7 @@ public class User extends BaseEntity<UUID> implements UserDetails, CredentialsCo
 
     /**
      * Retrieves the authorities granted to the user.
-     * Authorities include both permissions associated with roles and the roles themselves.
+     * Authorities include both authorities associated with roles and the roles themselves.
      *
      * @return a collection of granted authorities
      */
@@ -64,10 +64,10 @@ public class User extends BaseEntity<UUID> implements UserDetails, CredentialsCo
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
 
-        // Add permissions
+        // Add authorities
         roles.forEach(
-                role -> role.getPermissions().stream()
-                        .map(permission -> new SimpleGrantedAuthority(permission.getName()))
+                role -> role.getAuthorities().stream()
+                        .map(authority -> new SimpleGrantedAuthority(authority.getName()))
                         .forEach(authorities::add));
 
         // Add role authority

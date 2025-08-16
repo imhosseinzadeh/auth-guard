@@ -28,9 +28,9 @@ public class Role extends BaseEntity<Short> {
     @ManyToMany
     @JoinTable(
             schema = "authentication",
-            name = "roles_permissions",
+            name = "roles_authorities",
             joinColumns = @JoinColumn(name = "role_id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id")
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
     )
-    private Set<Permission> permissions;
+    private Set<Authority> authorities;
 }
