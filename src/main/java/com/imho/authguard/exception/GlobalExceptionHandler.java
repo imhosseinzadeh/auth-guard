@@ -44,11 +44,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ProblemDetail> handleValidationException(MethodArgumentNotValidException ex) {
-        String title = messageResolver.getMessage("error.validation.title");
-        String detail = messageResolver.getMessage("error.validation.detail");
+        String title = messageResolver.getMessage("exception.validation.title");
+        String detail = messageResolver.getMessage("exception.validation.detail");
 
         ProblemDetail problem = buildProblemDetail(HttpStatus.BAD_REQUEST, title, detail);
-        problem.setProperty("solution", "error.validation.solution");
+        problem.setProperty("solution", "exception.validation.solution");
 
         // Set validation errors
         List<Map<String, String>> errors = ex.getBindingResult()
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
         log.error("Handled InfrastructureException: {}", ex.getMessage(), ex);
 
         ProblemDetail problem = ex.getBody();
-        problem.setProperty("solution", "error.infrastructure.solution");
+        problem.setProperty("solution", "exception.infrastructure.solution");
 
         return ResponseEntity
                 .status(ex.getStatusCode())
@@ -79,11 +79,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> handleUnexpectedException(Exception ex) {
         log.error("Unhandled exception: {}", ex.getMessage(), ex);
 
-        String title = messageResolver.getMessage("error.unexpected.title");
-        String detail = messageResolver.getMessage("error.unexpected.detail");
+        String title = messageResolver.getMessage("exception.unexpected.title");
+        String detail = messageResolver.getMessage("exception.unexpected.detail");
 
         ProblemDetail problem = buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, title, detail);
-        problem.setProperty("solution", "error.unexpected.solution");
+        problem.setProperty("solution", "exception.unexpected.solution");
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
         if (ex instanceof NotFoundException) return HttpStatus.NOT_FOUND;
         if (ex instanceof ConflictException) return HttpStatus.CONFLICT;
         if (ex instanceof ExpiredException) return HttpStatus.GONE;
-        return HttpStatus.INTERNAL_SERVER_ERROR;
+        return HttpStatus.BAD_REQUEST;
     }
 
     private ProblemDetail buildProblemDetail(HttpStatus status, String title, String detail) {

@@ -21,7 +21,7 @@ public class I18NConfiguration {
         ReloadableResourceBundleMessageSource source = new ReloadableResourceBundleMessageSource();
         source.setBasenames(
                 "classpath:messages/messages",
-                "classpath:messages/errors",
+                "classpath:messages/exceptions",
                 "classpath:messages/validation"
         );
         source.setDefaultEncoding("UTF-8");
