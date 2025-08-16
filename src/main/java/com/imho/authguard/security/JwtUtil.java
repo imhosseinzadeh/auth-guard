@@ -10,8 +10,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -29,6 +31,26 @@ public class JwtUtil {
 
     @Value("${jwt.refresh.token.expiry}")
     private long refreshTokenExpirySeconds;
+
+    /**
+     * Generates access and refresh tokens for a user, along with expiration info.
+     */
+    public Map<String, String> generateTokens(User user) {
+        // Generate JWT tokens
+        String accessToken = this.generateAccessToken(user);
+        String refreshToken = this.generateRefreshToken(user);
+
+        // Expiration time for access token
+        String expiresAtIso = DateTimeFormatter.ISO_INSTANT.format(
+                this.decode(accessToken).getExpiresAt().toInstant()
+        );
+
+        return Map.of(
+                "access_token", accessToken,
+                "refresh_token", refreshToken,
+                "expires_at", expiresAtIso
+        );
+    }
 
     /**
      * Generates an access token for the given user.
@@ -69,6 +91,13 @@ public class JwtUtil {
                 .withExpiresAt(expiresAt)
                 .withJWTId(UUID.randomUUID().toString())
                 .sign(Algorithm.HMAC512(secret));
+    }
+
+    /**
+     * Extracts the username (subject) from a JWT without verifying it.
+     */
+    public String extractUsername(String token) {
+        return JWT.decode(token).getSubject();
     }
 
     /**
