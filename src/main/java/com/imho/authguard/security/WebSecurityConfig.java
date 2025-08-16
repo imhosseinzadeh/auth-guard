@@ -16,16 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.PathPatternRequestMatcher;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -35,12 +31,7 @@ public class WebSecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Supported encoders
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-        encoders.put("bcrypt", new BCryptPasswordEncoder(10));
-
-        // Delegating encoder with bcrypt as default
-        return new DelegatingPasswordEncoder("bcrypt", encoders);
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
@@ -70,8 +61,8 @@ public class WebSecurityConfig {
                                         PathPatternRequestMatcher.pathPattern("/v3/api-docs/**"),
                                         PathPatternRequestMatcher.pathPattern("/swagger-ui/**"),
                                         PathPatternRequestMatcher.pathPattern(HttpMethod.GET, "/actuator/health"),
-                                        PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/users/register"),
-                                        PathPatternRequestMatcher.pathPattern(HttpMethod.PUT, "/api/v1/users/phone-verification"),
+                                        PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/users"), // register api
+                                        PathPatternRequestMatcher.pathPattern(HttpMethod.POST, "/api/v1/auth/email-verification"),
                                         JwtAuthenticationFilter.LOGIN_MATCHER)
                                 .permitAll()
                                 .anyRequest().authenticated())
