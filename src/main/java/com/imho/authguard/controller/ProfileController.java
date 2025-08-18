@@ -2,23 +2,21 @@ package com.imho.authguard.controller;
 
 import com.imho.authguard.domain.entity.user.User;
 import com.imho.authguard.domain.service.AuthService;
-import com.imho.authguard.dto.request.EmailVerificationRequest;
-import com.imho.authguard.dto.response.JsonResponse;
 import com.imho.authguard.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/v1/users/me")
 @RequiredArgsConstructor
-public class AuthController {
+public class ProfileController {
 
     private final AuthService authService;
 
-    @GetMapping("/me")
-    public ResponseEntity<UserProfileResponse> getCurrentUser() {
+    @GetMapping
+    public ResponseEntity<UserProfileResponse> getProfile() {
         User authenticatedUser = authService.getAuthenticatedUser();
 
         UserProfileResponse response = new UserProfileResponse(
@@ -31,10 +29,14 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/email-verification")
-    public ResponseEntity<JsonResponse> verify(@Validated @RequestBody EmailVerificationRequest verificationRequest) {
-        authService.verifyEmail(verificationRequest);
-        return ResponseEntity.ok(new JsonResponse("email verified successfully"));
+    @PatchMapping
+    public ResponseEntity<String> updateProfile() {
+        throw new NotImplementedException("Not Implemented");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteProfile() {
+        throw new NotImplementedException("Not Implemented");
     }
 
 }
