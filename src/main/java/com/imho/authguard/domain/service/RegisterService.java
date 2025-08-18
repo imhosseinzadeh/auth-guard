@@ -51,8 +51,8 @@ public class RegisterService {
                 .password(encodedPassword)
                 .firstname(registerRequest.firstname())
                 .lastname(registerRequest.lastname())
+                .emailVerified(false)
                 .enabled(false)
-                .isEmailVerified(false)
                 .build();
         userRepository.save(newUser);
 

@@ -9,17 +9,17 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TABLE authentication.users
 (
-    user_id           UUID PRIMARY KEY,
-    email             VARCHAR(100) NOT NULL UNIQUE,
-    is_email_verified BOOLEAN      NOT NULL,
-    firstname         VARCHAR(100),
-    lastname          VARCHAR(100),
-    phone_number      VARCHAR(15),
-    password          VARCHAR(255) NOT NULL,
-    created_at        TIMESTAMPTZ  NOT NULL,
-    updated_at        TIMESTAMPTZ  NOT NULL,
-    version           BIGINT,
-    enabled           BOOLEAN      NOT NULL
+    user_id        UUID PRIMARY KEY,
+    email          VARCHAR(100) NOT NULL UNIQUE,
+    email_verified BOOLEAN      NOT NULL,
+    firstname      VARCHAR(100),
+    lastname       VARCHAR(100),
+    phone_number   VARCHAR(15),
+    password       VARCHAR(255) NOT NULL,
+    created_at     TIMESTAMPTZ  NOT NULL,
+    updated_at     TIMESTAMPTZ  NOT NULL,
+    version        BIGINT,
+    enabled        BOOLEAN      NOT NULL
 );
 
 CREATE TABLE authentication.otp

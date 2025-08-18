@@ -41,9 +41,9 @@ public class User extends BaseEntity<UUID> implements UserDetails, CredentialsCo
     private String password;
 
     @Column(nullable = false)
-    private Boolean enabled;
+    private boolean enabled;
 
-    private boolean isEmailVerified;
+    private boolean emailVerified;
 
     @ManyToMany
     @JoinTable(
