@@ -5,5 +5,7 @@ import java.util.UUID;
 public record UserProfileResponse(UUID id,
                                   String firstname,
                                   String lastname,
-                                  String email) {
+                                  String email,
+                                  Boolean emailVerified,
+                                  Boolean enabled) {
 }

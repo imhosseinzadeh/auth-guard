@@ -2,6 +2,7 @@ package com.imho.authguard.controller;
 
 import com.imho.authguard.domain.entity.user.User;
 import com.imho.authguard.domain.service.AuthService;
+import com.imho.authguard.dto.response.JsonResponse;
 import com.imho.authguard.dto.response.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.NotImplementedException;
@@ -16,17 +17,20 @@ public class ProfileController {
     private final AuthService authService;
 
     @GetMapping
-    public ResponseEntity<UserProfileResponse> getProfile() {
+    public ResponseEntity<JsonResponse<UserProfileResponse>> getProfile() {
         User authenticatedUser = authService.getAuthenticatedUser();
 
         UserProfileResponse response = new UserProfileResponse(
                 authenticatedUser.getId(),
                 authenticatedUser.getFirstname(),
                 authenticatedUser.getLastname(),
-                authenticatedUser.getEmail()
+                authenticatedUser.getEmail(),
+                authenticatedUser.isEmailVerified(),
+                authenticatedUser.isEnabled()
         );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity
+                .ok(new JsonResponse<>(true, "Profile fetched successfully", response));
     }
 
     @PatchMapping
