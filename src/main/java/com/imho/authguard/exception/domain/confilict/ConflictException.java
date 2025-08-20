@@ -4,8 +4,8 @@ import com.imho.authguard.exception.domain.DomainException;
 
 public class ConflictException extends DomainException {
 
-    public ConflictException(String title, String message) {
-        super(title, message);
+    public ConflictException(String message) {
+        super(message);
     }
 
 }

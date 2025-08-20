@@ -35,9 +35,9 @@ public class GlobalExceptionHandler {
         log.error("Handled DomainException: {}", ex.getMessage(), ex); // TODO AOP
 
         HttpStatus status = resolveHttpStatus(ex);
-        ProblemDetail problem = buildProblemDetail(status, ex.getTitle(), ex.getMessage());
+        ProblemDetail problem = buildProblemDetail(status, ex.getMessage());
 
-        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, ex.getMessage(), problem);
 
         return ResponseEntity
                 .status(problem.getStatus())
@@ -46,10 +46,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<JsonResponse<ProblemDetail>> handleValidationException(MethodArgumentNotValidException ex) {
-        String title = messageResolver.getMessage("exception.validation.title");
         String detail = messageResolver.getMessage("exception.validation.detail");
 
-        ProblemDetail problem = buildProblemDetail(HttpStatus.BAD_REQUEST, title, detail);
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemDetail problem = buildProblemDetail(status, detail);
 
         // Set validation errors
         List<Map<String, String>> errors = ex.getBindingResult()
@@ -61,10 +61,10 @@ public class GlobalExceptionHandler {
                 .toList();
         problem.setProperty("errors", errors);
 
-        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, ex.getMessage(), problem);
 
         return ResponseEntity
-                .badRequest()
+                .status(status)
                 .body(response);
     }
 
@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 
         ProblemDetail problem = ex.getBody();
 
-        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, ex.getMessage(), problem);
 
         return ResponseEntity
                 .status(problem.getStatus())
@@ -85,15 +85,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<JsonResponse<ProblemDetail>> handleUnexpectedException(Exception ex) {
         log.error("Unhandled exception: {}", ex.getMessage(), ex); // TODO AOP
 
-        String title = messageResolver.getMessage("exception.unexpected.title");
         String detail = messageResolver.getMessage("exception.unexpected.detail");
 
-        ProblemDetail problem = buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, title, detail);
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        ProblemDetail problem = buildProblemDetail(status, detail);
 
         JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
 
         return ResponseEntity
-                .status(problem.getStatus())
+                .status(status)
                 .body(response);
     }
 
@@ -104,9 +104,8 @@ public class GlobalExceptionHandler {
         return HttpStatus.BAD_REQUEST;
     }
 
-    private ProblemDetail buildProblemDetail(HttpStatus status, String title, String detail) {
+    private ProblemDetail buildProblemDetail(HttpStatus status, String detail) {
         ProblemDetail problem = ProblemDetail.forStatusAndDetail(status, detail);
-        problem.setTitle(title);
         problem.setProperty("timestamp", ZonedDateTime.now().truncatedTo(ChronoUnit.SECONDS).toString());
         problem.setProperty("correlationId", UUID.randomUUID().toString());
         return problem;

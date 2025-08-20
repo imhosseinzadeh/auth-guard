@@ -17,10 +17,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OtpService {
 
-    private static final String ERROR_TITLE_MISSING_OTP = "Missing or Expired OTP";
     private static final String ERROR_MESSAGE_MISSING_OTP = "No valid OTP was found for this account. Please request a new one.";
 
-    private static final String ERROR_TITLE_INVALID_OTP = "Invalid OTP";
     private static final String ERROR_MESSAGE_INVALID_OTP = "The OTP you entered is incorrect. Please check and try again.";
 
     private final OtpRepository otpRepository;
@@ -43,10 +41,10 @@ public class OtpService {
      */
     public void validateOtp(User user, OtpType type, String rawCode) {
         Otp otp = otpRepository.findActiveOtp(user.getId(), type)
-                .orElseThrow(() -> new DomainException(ERROR_TITLE_MISSING_OTP, ERROR_MESSAGE_MISSING_OTP));
+                .orElseThrow(() -> new DomainException(ERROR_MESSAGE_MISSING_OTP));
 
         if (!passwordEncoder.matches(rawCode, otp.getCode())) {
-            throw new DomainException(ERROR_TITLE_INVALID_OTP, ERROR_MESSAGE_INVALID_OTP);
+            throw new DomainException(ERROR_MESSAGE_INVALID_OTP);
         }
 
         otp.markAsUsed();

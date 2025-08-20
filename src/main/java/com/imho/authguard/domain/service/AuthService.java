@@ -74,16 +74,10 @@ public class AuthService {
         final String code = emailVerificationRequest.code();
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new DomainException(
-                        "Account Not Found",
-                        "No account associated with the provided email address."
-                ));
+                .orElseThrow(() -> new DomainException("No account associated with the provided email address."));
 
         if (user.isEmailVerified()) {
-            throw new DomainException(
-                    "Email Already Verified",
-                    "This email address has already been verified. Please log in."
-            );
+            throw new DomainException("This email address has already been verified. Please log in.");
         }
 
         // Check if otp is valid

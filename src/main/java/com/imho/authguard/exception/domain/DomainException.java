@@ -5,11 +5,8 @@ import lombok.Getter;
 @Getter
 public class DomainException extends RuntimeException {
 
-    private final String title;
-
-    public DomainException(String title, String message) {
+    public DomainException(String message) {
         super(message);
-        this.title = title;
     }
 
 }

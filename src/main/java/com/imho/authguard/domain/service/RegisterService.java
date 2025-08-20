@@ -5,6 +5,7 @@ import com.imho.authguard.domain.entity.user.OtpType;
 import com.imho.authguard.domain.entity.user.User;
 import com.imho.authguard.dto.request.UserRegisterRequest;
 import com.imho.authguard.dto.response.RegistrationStatus;
+import com.imho.authguard.dto.response.UserProfileResponse;
 import com.imho.authguard.dto.response.UserRegisterResponse;
 import com.imho.authguard.exception.domain.DomainException;
 import com.imho.authguard.infra.notification.EmailService;
@@ -38,12 +39,13 @@ public class RegisterService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserRegisterResponse register(UserRegisterRequest registerRequest) {
-        Optional<User> existingUser = userRepository.findByEmail(registerRequest.email());
+    public UserProfileResponse register(UserRegisterRequest registerRequest) {
+        Optional<User> fetchedUser = userRepository.findByEmail(registerRequest.email());
 
-        if (existingUser.isPresent()) {
-            return handleExistingUser(existingUser.get());
-        }
+        fetchedUser
+                .ifPresent(user -> {
+                    throw new DomainException("An Account with this email already exists.");
+                });
 
         String encodedPassword = passwordEncoder.encode(registerRequest.password());
         User newUser = User.builder()
@@ -56,16 +58,23 @@ public class RegisterService {
                 .build();
         userRepository.save(newUser);
 
-        Otp otp = generateAndSendOTP(newUser);
+
+        return new UserProfileResponse(
+                newUser.getId(),
+                newUser.getFirstname(),
+                newUser.getLastname(),
+                newUser.getEmail(),
+                newUser.isEmailVerified(),
+                newUser.isEnabled()
+        );
+/*        Otp otp = generateAndSendOTP(newUser);
 
         long expiresInSeconds = Duration.between(ZonedDateTime.now(), otp.getExpiresAt()).toSeconds();
-        return new UserRegisterResponse(RegistrationStatus.NEW_USER_CREATED, expiresInSeconds);
+        return new UserRegisterResponse(RegistrationStatus.NEW_USER_CREATED, expiresInSeconds);*/
     }
 
     private UserRegisterResponse handleExistingUser(User user) {
-        if (user.isEmailVerified()) {
-            throw new DomainException("Duplicate email", "An account with this email already exists.");
-        }
+
 
         Optional<Otp> activeOtp = otpRepository.findActiveOtp(user.getId(), OtpType.VERIFY_EMAIL);
 

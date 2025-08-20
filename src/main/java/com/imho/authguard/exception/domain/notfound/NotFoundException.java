@@ -4,8 +4,8 @@ import com.imho.authguard.exception.domain.DomainException;
 
 public class NotFoundException extends DomainException {
 
-    public NotFoundException(String title, String message) {
-        super(title, message);
+    public NotFoundException(String message) {
+        super(message);
     }
 
 }
