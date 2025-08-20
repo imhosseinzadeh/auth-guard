@@ -8,8 +8,4 @@ public class NotFoundException extends DomainException {
         super(title, message);
     }
 
-    public NotFoundException(String title, String message, String solution) {
-        super(title, message, solution);
-    }
-
 }

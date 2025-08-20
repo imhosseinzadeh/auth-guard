@@ -6,8 +6,4 @@ public class ExpiredOtpException extends ExpiredException {
         super(title, message);
     }
 
-    public ExpiredOtpException(String title, String message, String solution) {
-        super(title, message, solution);
-    }
-
 }

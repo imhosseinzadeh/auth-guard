@@ -36,7 +36,6 @@ public class GlobalExceptionHandler {
 
         HttpStatus status = resolveHttpStatus(ex);
         ProblemDetail problem = buildProblemDetail(status, ex.getTitle(), ex.getMessage());
-        problem.setProperty("solution", ex.getSolution());
 
         JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
 
@@ -51,7 +50,6 @@ public class GlobalExceptionHandler {
         String detail = messageResolver.getMessage("exception.validation.detail");
 
         ProblemDetail problem = buildProblemDetail(HttpStatus.BAD_REQUEST, title, detail);
-        problem.setProperty("solution", "exception.validation.solution");
 
         // Set validation errors
         List<Map<String, String>> errors = ex.getBindingResult()
@@ -75,7 +73,6 @@ public class GlobalExceptionHandler {
         log.error("Handled InfrastructureException: {}", ex.getMessage(), ex); // TODO AOP
 
         ProblemDetail problem = ex.getBody();
-        problem.setProperty("solution", "exception.infrastructure.solution");
 
         JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
 
@@ -92,7 +89,6 @@ public class GlobalExceptionHandler {
         String detail = messageResolver.getMessage("exception.unexpected.detail");
 
         ProblemDetail problem = buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, title, detail);
-        problem.setProperty("solution", "exception.unexpected.solution");
 
         JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
 

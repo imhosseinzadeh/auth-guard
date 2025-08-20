@@ -8,8 +8,4 @@ public class ExpiredException extends DomainException {
         super(title, message);
     }
 
-    public ExpiredException(String title, String message, String solution) {
-        super(title, message, solution);
-    }
-
 }

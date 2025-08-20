@@ -8,8 +8,4 @@ public class ConflictException extends DomainException {
         super(title, message);
     }
 
-    public ConflictException(String title, String message, String solution) {
-        super(title, message, solution);
-    }
-
 }
