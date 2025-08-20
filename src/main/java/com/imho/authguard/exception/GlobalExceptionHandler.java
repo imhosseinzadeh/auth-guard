@@ -1,5 +1,6 @@
 package com.imho.authguard.exception;
 
+import com.imho.authguard.dto.response.JsonResponse;
 import com.imho.authguard.exception.domain.DomainException;
 import com.imho.authguard.exception.domain.confilict.ConflictException;
 import com.imho.authguard.exception.domain.expired.ExpiredException;
@@ -30,20 +31,22 @@ public class GlobalExceptionHandler {
     private final MessageResolver messageResolver;
 
     @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ProblemDetail> handleDomainException(DomainException ex) {
-        log.error("Handled DomainException: {}", ex.getMessage(), ex);
+    public ResponseEntity<JsonResponse<ProblemDetail>> handleDomainException(DomainException ex) {
+        log.error("Handled DomainException: {}", ex.getMessage(), ex); // TODO AOP
 
         HttpStatus status = resolveHttpStatus(ex);
         ProblemDetail problem = buildProblemDetail(status, ex.getTitle(), ex.getMessage());
         problem.setProperty("solution", ex.getSolution());
 
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+
         return ResponseEntity
-                .status(status)
-                .body(problem);
+                .status(problem.getStatus())
+                .body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ProblemDetail> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<JsonResponse<ProblemDetail>> handleValidationException(MethodArgumentNotValidException ex) {
         String title = messageResolver.getMessage("exception.validation.title");
         String detail = messageResolver.getMessage("exception.validation.detail");
 
@@ -60,24 +63,30 @@ public class GlobalExceptionHandler {
                 .toList();
         problem.setProperty("errors", errors);
 
-        return ResponseEntity.badRequest().body(problem);
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+
+        return ResponseEntity
+                .badRequest()
+                .body(response);
     }
 
     @ExceptionHandler(InfrastructureException.class)
-    public ResponseEntity<ProblemDetail> handleInfrastructureException(InfrastructureException ex) {
-        log.error("Handled InfrastructureException: {}", ex.getMessage(), ex);
+    public ResponseEntity<JsonResponse<ProblemDetail>> handleInfrastructureException(InfrastructureException ex) {
+        log.error("Handled InfrastructureException: {}", ex.getMessage(), ex); // TODO AOP
 
         ProblemDetail problem = ex.getBody();
         problem.setProperty("solution", "exception.infrastructure.solution");
 
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+
         return ResponseEntity
-                .status(ex.getStatusCode())
-                .body(problem);
+                .status(problem.getStatus())
+                .body(response);
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ProblemDetail> handleUnexpectedException(Exception ex) {
-        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+    public ResponseEntity<JsonResponse<ProblemDetail>> handleUnexpectedException(Exception ex) {
+        log.error("Unhandled exception: {}", ex.getMessage(), ex); // TODO AOP
 
         String title = messageResolver.getMessage("exception.unexpected.title");
         String detail = messageResolver.getMessage("exception.unexpected.detail");
@@ -85,9 +94,11 @@ public class GlobalExceptionHandler {
         ProblemDetail problem = buildProblemDetail(HttpStatus.INTERNAL_SERVER_ERROR, title, detail);
         problem.setProperty("solution", "exception.unexpected.solution");
 
+        JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
+
         return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(problem);
+                .status(problem.getStatus())
+                .body(response);
     }
 
     private HttpStatus resolveHttpStatus(DomainException ex) {
