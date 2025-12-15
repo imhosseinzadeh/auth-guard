@@ -6,7 +6,6 @@ import com.imho.authguard.exception.domain.confilict.ConflictException;
 import com.imho.authguard.exception.domain.expired.ExpiredException;
 import com.imho.authguard.exception.domain.notfound.NotFoundException;
 import com.imho.authguard.exception.infrastructure.InfrastructureException;
-import com.imho.authguard.infra.i18n.MessageResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
-    private final MessageResolver messageResolver;
 
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<JsonResponse<ProblemDetail>> handleDomainException(DomainException ex) {
@@ -46,9 +44,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<JsonResponse<ProblemDetail>> handleValidationException(MethodArgumentNotValidException ex) {
-        String detail = messageResolver.getMessage("exception.validation.detail");
-
         HttpStatus status = HttpStatus.BAD_REQUEST;
+        String detail = "Validation failed";
         ProblemDetail problem = buildProblemDetail(status, detail);
 
         // Set validation errors
@@ -85,9 +82,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<JsonResponse<ProblemDetail>> handleUnexpectedException(Exception ex) {
         log.error("Unhandled exception: {}", ex.getMessage(), ex); // TODO AOP
 
-        String detail = messageResolver.getMessage("exception.unexpected.detail");
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        String detail = "Unexpected error occurred";
+
         ProblemDetail problem = buildProblemDetail(status, detail);
 
         JsonResponse<ProblemDetail> response = new JsonResponse<>(false, problem.getTitle(), problem);
