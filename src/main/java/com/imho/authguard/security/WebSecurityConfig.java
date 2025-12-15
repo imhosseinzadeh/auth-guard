@@ -30,6 +30,11 @@ import org.springframework.security.web.servlet.util.matcher.PathPatternRequestM
 public class WebSecurityConfig {
 
     @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }

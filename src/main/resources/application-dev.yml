@@ -1,19 +1,17 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_guard
-    username: postgres
-    password: secret
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: validate
 
   mail:
     host: smtp.gmail.com
-    port: 465
-    username:
-    password:
-    ssl:
-      enabled: true
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
 
 logging:
   level:
