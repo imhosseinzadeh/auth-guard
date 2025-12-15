@@ -2,14 +2,14 @@ name: auth_guard
 
 services:
   postgres:
-    image: postgres:17.5
+    image: postgres:18.1
     container_name: auth_guard_postgres
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     ports:
       - "5432:5432"
     networks:
@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4:9.6.0
+    image: dpage/pgadmin4:9.11.0
     container_name: auth_guard_pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
